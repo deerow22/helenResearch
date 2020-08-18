@@ -95,17 +95,18 @@ def open_mylcs(tic,sector):
                     sector      -(int) light curve sector number for target
     Returns:        time, flux, flux_err (numpy arrays) 
     '''
-    filepath = 'data/SECONDRUN/cleaned_LightCurves/{}/sector{}_lc.fits'.format(tic,sector)
+    filepath = '/Volumes/Seagate-stars/SECONDRUN/cleaned_LightCurves/{}/sector{}_lc.fits'.format(tic,sector)
     try:
         lc = fits.open(filepath)
         lc_data = lc[1].data
         time=lc_data.TIME; flux=lc_data.FLUX; flux_err=lc_data.FLUX_ERR
     except Exception as e:
         print('TIC: {} Sector: {} couldnt be opened; encountered Error: {}'.format(tic,sector,e))
+        time,flux,flux_err = 'None','None','None'
     
     return time,flux,flux_err
 
-def kepEBopen(kic,path='mypath'):
+def kepEBopen(kic,path='externalpath'):
     '''
     ~Opens Kepler EB data files I downloaded to my computer~
     Args: kic       -(int or str) id for kepler target
@@ -123,6 +124,15 @@ def kepEBopen(kic,path='mypath'):
             klc = lk.lightcurve.LightCurve(flux=kflux,time=ktime,flux_err=kfluxerr)#make lk object
         except Exception as e:
             klc = "Verify KIC - couldn't open data file with mypath"
+    elif path == 'externalpath':
+        try:
+            kep_lcfile = pd.read_csv('/Volumes/Seagate-stars/KeplerEBs/KepEB_rawLCs/{}_lc.csv'.format(kic),header=0,delimiter ='	')
+            ktime = kep_lcfile['# bjd']
+            kflux = kep_lcfile['dtr_flux']
+            kfluxerr = kep_lcfile['dtr_err']
+            klc = lk.lightcurve.LightCurve(flux=kflux,time=ktime,flux_err=kfluxerr)#make lk object
+        except Exception as e:
+            klc = "Verify KIC - couldn't open data file with externalpath"
     else:
         try:
             kep_lcfile = pd.read_csv(path)
@@ -135,7 +145,7 @@ def kepEBopen(kic,path='mypath'):
     return klc
     
 ######################## useful tools #########################
-def period_grid(start=0.3,stop=27,N=25000):
+def period_grid(start=0.3,stop=27,N=25000,log='off'):
     '''
     ~generates list of periods for BLS to check~
     Requires: Numpy;
@@ -145,7 +155,11 @@ def period_grid(start=0.3,stop=27,N=25000):
                             Default values optimized for single TESS sector
     Returns:       array of periods to check
     '''
-    p_grid = np.linspace(start,stop,N)
+    if log=='on': #change test to gridlog 
+        p_grid_log = np.logspace(start,stop,N) 
+        p_grid = np.log10(p_grid_log) #converts log2linear space - required for bls to work
+    else:
+        p_grid = np.linspace(start,stop,N)
     return p_grid
 
 def duration_grid(start=.01,stop=0.29,N=5):
@@ -261,3 +275,85 @@ def bls(period_grid,duration_grid,time,flux,flux_err=0.):
 #         bls.transittime = periodogram.transit_time[np.argmax(periodogram.power)]
     
         return periodogram, [ppower, pperiod, pdepth, pduration, ptransittime] #bls
+
+############################ 2ND PASS BLS STUFF #######################################
+
+def finegrid(period):
+    minp = (period)-(1e-3); maxp=(1e-3)+(period)
+    finegrid = np.arange(minp,maxp,5e-7)
+    return finegrid
+
+def halfgrid(period):
+    minp = (period/2)-(1e-3);maxp=(1e-3)+(period/2)
+    halfgrid = np.arange(minp,maxp,5e-7)
+    return halfgrid
+    
+# pgrid/dgrid compatible check
+def grids_check(period_grid,duration_grid): #needs unit test
+    '''
+    ~Checks that grids don't overlap & durations shorter 
+    than periods as required for astropy BLS code~
+    
+    Args: period_grid     -(array) int/float periods to search
+          duration_grid   -(array) int/float durations to search
+          
+    Returns: input grids if check good, else corrects durations 
+             & returns grids if check bad
+    '''
+    val = 1e-7 #extra addition b/c values cannot ==
+    if min(period_grid) > max(duration_grid): #add in handling for single values (aka not array)
+        return period_grid, duration_grid
+    elif max(duration_grid) > min(period_grid):
+        new_dgrid = np.linspace(min(duration_grid),min(period_grid)-val,len(duration_grid)) #randomly chose val
+        return period_grid, new_dgrid
+    else: #this is same as elif-do a test to see if anything else could even happen
+        new_dgrid = np.linspace(min(duration_grid),min(period_grid)-val,len(duration_grid))
+        return period_grid, new_dgrid
+        
+def dubgrid(period):
+	minp = (period*2)-(1e-2); maxp=(1e-2)+(period*2)
+	dubgrid = np.arange(minp,maxp,5e-7)
+	return dubgrid
+        
+def check_bls_stats(stats,duration_grid,time,flux,flux_err=0.):
+    '''
+    ~ Check BLS output to search for harmonics with higher power~
+    Args:  stats      -(list) output bls values for [power,period,depth,duration,transit_time]
+    Returns: highest power period from original, double, half 
+    '''
+    ogperiod = stats[1]; ogpower = stats[0]
+    #set new grids & check for compatibility 
+    
+    finer_grid = finegrid(ogperiod)
+    double_grid = dubgrid(ogperiod)
+    
+    pg_og, dg_og = grids_check(finer_grid,duration_grid)
+    pg_dub, dg_dub = grids_check(double_grid,duration_grid)
+    #run Secondary bls
+    
+    pgram_newog, stats_newog = bls(pg_og, dg_og,time,flux,flux_err)
+    pgram_double, stats_double = bls(pg_dub, dg_dub,time,flux,flux_err)
+    if ogperiod >= 0.6: #do 1/2 harmonic test
+    	half_pgrid = halfgrid(ogperiod)
+    	pg_half, dg_half = grids_check(half_pgrid,duration_grid)
+    	pgram_half, stats_half = bls(pg_half, dg_half,time,flux,flux_err)
+    	new_pgrams = [pgram_newog,pgram_half,pgram_double]
+    	powers = [ogpower,stats_newog[0],stats_half[0],stats_double[0]]
+    	allstats = [stats,stats_newog,stats_half,stats_double]
+    else: #dont do 1/2 test
+    	new_pgrams = [pgram_newog, -99, pgram_double] # 1/2 harmonic placeholder -99
+    	powers = [ogpower,stats_newog[0],-99,stats_double[0]] # 1/2harmonic placeholder -99
+    	allstats = [stats,stats_newog,-99,stats_double] #index should never pick 2
+    
+    sorted_powers = np.sort(powers)
+    ppercent = (100*sorted_powers[-2])/sorted_powers[-1] #what percent of highest peak is the 2nd highest peak
+    if ppercent <= 90:
+    	goodpeak = 'True'
+    else:
+    	goodpeak = 'False'
+    
+    # choosing the highest power
+    whichperidx = np.where(powers==max(powers))[0][0]
+    best_stats = allstats[whichperidx]
+    return best_stats,new_pgrams,whichperidx,goodpeak
+
