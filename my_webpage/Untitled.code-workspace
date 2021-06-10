@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../EscapeEarth_website"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "my_webpage"
+	}
+}

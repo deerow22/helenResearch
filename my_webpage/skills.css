@@ -1,0 +1,45 @@
+
+.progress {
+    margin: 20px; 
+    height: 50px;
+      
+}
+.progress-bar {
+    font-size:25px;
+}
+
+.main-space {
+    display: flex;
+    align-items: flex-start;
+    margin-right: -150px;
+}
+
+.skill-breakdown {
+    /*margin: 100px 350px 0px 100px;*/ 
+    margin-top: 150px;
+    /* margin-right: 50%; */
+    flex: 1;
+    width: 40rem;
+    margin-right: 200px;
+}
+
+.skill-breakdown p {
+    margin-left: 20px;
+    font-family: 'Courier New', Courier, monospace
+}
+
+.side-images {
+    background-color: rgb(72, 41, 212);
+    display: flex;
+    flex-wrap: wrap;
+    width: 60rem; 
+    /* changes how much of page taken up */
+    margin: 150px 100px 0px 0px;
+    /* align-content: space-between; */
+}
+.side-images img {
+    /* margin-right: 5px; */
+    /* margin-top: 5px; */
+    margin: 5px 5px 5px 5px;
+    width: 16rem;
+}

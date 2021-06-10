@@ -1,0 +1,34 @@
+.cards{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-content: space-around;
+    
+}
+
+.cards div {
+    margin-right: 60px;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:auto;
+    margin-bottom: 30px;
+    height: 550px;
+    width: 750px;
+}
+.card1{
+    background-image:url(./images/Abell-370.jpg);
+    /*margin-right: 60px; /*ajusts space btwn cards 1 &2...replaced by .cards div*/
+}
+.card2{
+    background-image:url(./images/lc-ex2.png);
+}
+.card3{
+    background-image:url(./images/EEcard.jpeg);
+}
+.card4{
+    background-image:url(./images/image-background-card4.jpg);
+}
+.card5{
+    background-image:url(./images/image-background-card5.jpg);
+}
