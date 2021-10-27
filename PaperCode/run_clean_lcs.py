@@ -28,38 +28,44 @@ current possibilities:
 
 ###always needed
 externalpath = '/Volumes/Seagate-stars/' #when generalized this is sec_path to raw datafiles (w/o fn)
-save_path = externalpath + 'Final_Run/Clean_LCs/'
+
 
 
 # #first run
 # df = pd.read_csv('{}Final_Run/SCVZ_targetlist.csv'.format(externalpath)) #south
 # sectors_list = [1,2,3,4,5,6,7,8,9,10,11,12,13] #south
+# save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
 # stitch = True
 # 
-# #second run
+#s# econd run
 # df = pd.read_csv('{}Final_Run/NCVZ_targetlist.csv'.format(externalpath)) #north
 # sectors_list = [14,15,16,17,18,19,20,21,22,23,24,25, 26] #north cvz
+# save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
 # stitch = True
 # 
 # #third run
 # df = pd.read_csv('{}Final_Run/secs_14_15_targetlist.csv'.format(externalpath)) #14 & 15
 # sectors_list = [14]
+# save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_1415/'
 # stitch = False
 # 
 # #fourth run
 # df = pd.read_csv('{}Final_Run/secs_14_15_targetlist.csv'.format(externalpath)) #14 & 15
 # sectors_list = [15]
+# save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_1415/'
 # stitch = False
 # 
-# #fifth run
-# df = pd.read_csv('{}Final_Run/SCVZ_targetlist.csv'.format(externalpath)) #south
-# sectors_list = [1,2,3,4,5,6,7,8,9,10,11,12,13] #south
-# stitch = False
-
-##sixth run
-df = pd.read_csv('{}Final_Run/NCVZ_targetlist.csv'.format(externalpath)) #north
-sectors_list = [16,17,18,19,20,21,22,23,24,25, 26] #north w/o 14/15 so will only do cvz/s since 14/15 done before
+#fifth run
+df = pd.read_csv('{}Final_Run/SCVZ_targetlist.csv'.format(externalpath)) #south
+sectors_list = [1,2,3,4,5,6,7,8,9,10,11,12,13] #south
+save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
 stitch = False
+
+# #sixth run
+# df = pd.read_csv('{}Final_Run/NCVZ_targetlist.csv'.format(externalpath)) #north
+# sectors_list = [16,17,18,19,20,21,22,23,24,25, 26] #north w/o 14/15 so will only do cvz/s since 14/15 done before
+# save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
+# stitch = False
 
 
 ###always needed

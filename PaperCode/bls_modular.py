@@ -111,7 +111,7 @@ def kepEBopen(kic,path='externalpath'):
     '''
     ~Opens Kepler EB data files I downloaded to my computer~
     Args: kic       -(int or str) id for kepler target
-          path      -(str) path to csv data file, default is mypath, 
+          path      -(str) path to csv data file, 
                       change it with {} where kic goes, header/delimiter 
                       specified for opening with pd.read_csv
     Returns: lightkurve Light Curve data object
@@ -124,7 +124,7 @@ def kepEBopen(kic,path='externalpath'):
             kfluxerr = kep_lcfile['dtr_err']
             klc = lk.lightcurve.LightCurve(flux=kflux,time=ktime,flux_err=kfluxerr)#make lk object
         except Exception as e:
-            klc = "Verify KIC - couldn't open data file with mypath"
+            klc = "Verify KIC - couldn't open data file with mypath used only for D.R."
     elif path == 'externalpath':
         try:
             kep_lcfile = pd.read_csv('/Volumes/Seagate-stars/KeplerEBs/KepEB_rawLCs/{}_lc.csv'.format(kic),header=0,delimiter ='	')
@@ -133,7 +133,7 @@ def kepEBopen(kic,path='externalpath'):
             kfluxerr = kep_lcfile['dtr_err']
             klc = lk.lightcurve.LightCurve(flux=kflux,time=ktime,flux_err=kfluxerr)#make lk object
         except Exception as e:
-            klc = "Verify KIC - couldn't open data file with externalpath"
+            klc = "Verify KIC - couldn't open data file with externalpath used only for D.R."
     else:
         try:
             kep_lcfile = pd.read_csv(path)
@@ -142,7 +142,7 @@ def kepEBopen(kic,path='externalpath'):
             kfluxerr = kep_lcfile['dtr_err']
             klc = lk.lightcurve.LightCurve(flux=kflux,time=ktime,flux_err=kfluxerr) #make lk object
         except Exception as e:
-            klc = "Verify file path - couldn't open data file"
+            klc = "Verify file path - couldn't open data file. Current path is {}".format(path)
     return klc
     
 ######################## useful tools #########################
