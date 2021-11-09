@@ -63,7 +63,7 @@ def pathfinder(tic,sector):
             print(err_stmt)
             path = 'None'
     elif type(sector) ==int: 
-        if sector == 14 | sector ==15:
+        if (sector == 14) | (sector ==15):
             path = '/Volumes/Seagate-stars/PAPER_FINAL_FILES/CleanLCs/CLEAN_1415/{}/sec{}_lc.fits'.format(tic,sector) #path to sector 14 & 15 lcs
         else:
             path = '/Volumes/Seagate-stars/PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/{}/sec{}_lc.fits'.format(tic,sector) #path to cvz sector lcs
@@ -95,6 +95,29 @@ def pathfinder2(tic,stitched=False): #finds path to lcs cleaned for BLS
         print(err_stmt)
         path = 'None'
     return path
+
+def find_secfiles(tic,pathstart):
+    '''
+    ~locates full path to available, cleaned, sector light curves.~
+    REQUIRES: glob & file naming convention of "sec*_lc.fits" where * will be 
+            found by this function
+    Args:
+        tic       -(int or str)TESS TIC ID
+        pathstart -(str) beginning of path to cleaned light curves (w/o filename)
+    Returns:
+        list of path strings for all files found
+    '''
+    if pathstart == 'mycvz':
+        pathstart = '/Volumes/Seagate-stars/PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/{}/'.format(tic)
+    elif pathstart == 'secs1415':
+        pathstart = '/Volumes/Seagate-stars/PAPER_FINAL_FILES/CleanLCs/CLEAN_1415/{}/'.format(tic)
+    else:
+        pathstart = pathstart
+    pathend = pathstart + 'sec*_lc.fits'
+    fullpath = glob.glob(pathend)
+    if len(fullpath)<1:
+        print("Didn't find any files inside path: {}".format(pathend))
+    return fullpath
 
 
 

@@ -96,7 +96,6 @@ def open_mylcs(tic,sector,filepath):
                     filepath    -(string) path to files
     Returns:        time, flux, flux_err (numpy arrays) 
     '''
-#     filepath = '/Volumes/Seagate-stars/SECONDRUN/cleaned_LightCurves/{}/sector{}_lc.fits'.format(tic,sector) #for CVZ path
     try:
         lc = fits.open(filepath)
         lc_data = lc[1].data

@@ -37,7 +37,7 @@ externalpath = '/Volumes/Seagate-stars/' #when generalized this is sec_path to r
 # save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
 # stitch = True
 # 
-#s# econd run
+# #second run
 # df = pd.read_csv('{}Final_Run/NCVZ_targetlist.csv'.format(externalpath)) #north
 # sectors_list = [14,15,16,17,18,19,20,21,22,23,24,25, 26] #north cvz
 # save_path = externalpath + 'PAPER_FINAL_FILES/CleanLCs/CLEAN_CVZs/'
